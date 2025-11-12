@@ -1,7 +1,10 @@
 <?php
 // konfiguracija/nustatymai.php
 declare(strict_types=1);
-session_start();
+// Start session only if none exists to avoid "session already active" notices
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 define("DB_SERVER", "localhost");
 define("DB_USER",   "stud");

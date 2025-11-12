@@ -27,7 +27,25 @@ $items = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 // Patikrinimai
 $pakanka_likučio = true;
 foreach ($items as $it) {
-    if ((int)$it['likutis'] < (int)$it['kiekis']) {
+    $pid = (int)$it['prekės_id'];
+    $kiekis = (int)$it['kiekis'];
+    $likutis = (int)$it['likutis'];
+    
+    // Get reserved quantities for this product (active reservations only, excluding current order)
+    $res_check = $c->query("SELECT COALESCE(SUM(up.`kiekis`), 0) as `rezervuotas`
+                            FROM `užsakymo_prekė` up
+                            JOIN `užsakymas` u ON u.`id`=up.`užsakymo_id`
+                            WHERE up.`prekės_id`=$pid 
+                            AND u.`būsena`='rezervuotos_prekės'
+                            AND u.`id`!=$uzid");
+    
+    $res_row = $res_check ? $res_check->fetch_assoc() : ['rezervuotas' => 0];
+    $reserved_qty = (int)$res_row['rezervuotas'];
+    
+    // Available = Total likutis - Reserved qty
+    $available = $likutis - $reserved_qty;
+    
+    if ($available < $kiekis) {
         $pakanka_likučio = false;
         break;
     }
