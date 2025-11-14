@@ -1,8 +1,8 @@
 <?php
 // www/bendra/header.php
-// Guard: redirect unauthenticated users to prisijungti.php (except that page itself)
 require_once __DIR__ . '/../../konfiguracija/bibliotekos/auth.php';
 
+// Redirect unauthenticated users to prisijungti.php 
 $currentScript = basename($_SERVER['PHP_SELF']);
 if (!prisijunges() && $currentScript !== 'prisijungti.php') {
   // If we're in a subfolder like /vadybininkas/ add ../ so redirect points to root/prisijungti.php
