@@ -3,6 +3,7 @@ require_once __DIR__ . '/../konfiguracija/nustatymai.php';
 require_once __DIR__ . '/../konfiguracija/bibliotekos/auth.php';
 $c = db();
 
+reikalauti_vaidmens('vartotojas');
 // Užtikriname krepšelį
 if (empty($_SESSION['krepselio_id'])) {
     $naud_id = !empty($_SESSION['naudotojas_id']) ? (int)$_SESSION['naudotojas_id'] : 'NULL';

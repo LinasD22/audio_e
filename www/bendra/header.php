@@ -1,7 +1,7 @@
 <?php
 // www/bendra/header.php
 require_once __DIR__ . '/../../konfiguracija/bibliotekos/auth.php';
-
+require_once __DIR__ . '/../../konfiguracija/nustatymai.php';
 // Redirect unauthenticated users to prisijungti.php 
 $currentScript = basename($_SERVER['PHP_SELF']);
 if (!prisijunges() && $currentScript !== 'prisijungti.php') {
@@ -10,7 +10,7 @@ if (!prisijunges() && $currentScript !== 'prisijungti.php') {
   header('Location: ' . $prefix . 'prisijungti.php');
   exit;
 }
-
+$pinigu_mygtuko_tekstas = 'Rodyti pinigus';
 ?>
 <!doctype html>
 <html lang="lt">
@@ -42,7 +42,9 @@ input, select, button { padding:4px 6px; margin:3px 0; }
   <a href="<?= (strpos($_SERVER['PHP_SELF'], '/vadybininkas/') !== false || strpos($_SERVER['PHP_SELF'], '/buhalteris/') !== false) ? '../' : '' ?>krepselis.php">Krepšelis</a>
 
   <a href="<?= (strpos($_SERVER['PHP_SELF'], '/vadybininkas/') !== false || strpos($_SERVER['PHP_SELF'], '/buhalteris/') !== false) ? '../' : '' ?>uzsakymo_busenos.php">Mano užsakymai</a>
-
+  
+  <a href="<?= (strpos($_SERVER['PHP_SELF'], '/vadybininkas/') !== false || strpos($_SERVER['PHP_SELF'], '/buhalteris/') !== false) ? '../' : '' ?>zinutes.php">Žinutės</a>
+  
   <?php if (!empty($_SESSION['rola']) && $_SESSION['rola']==='vadybininkas'): ?>
     <a href="<?= (strpos($_SERVER['PHP_SELF'], '/vadybininkas/') !== false) ? '' : 'vadybininkas/' ?>uzsakymai.php">Vadybininko užsakymai</a>
   <?php endif; ?>
@@ -57,6 +59,41 @@ input, select, button { padding:4px 6px; margin:3px 0; }
     <a href="<?= (strpos($_SERVER['PHP_SELF'], '/vadybininkas/') !== false || strpos($_SERVER['PHP_SELF'], '/buhalteris/') !== false) ? '../' : '' ?>prisijungti.php">Prisijungti</a>
   <?php endif; ?>
 
+  <?php if (!empty($_SESSION['naudotojas_id'])): ?>
+  
+  <?php
+  if (isset($_POST['lesos'])) {
+      $_SESSION['rodyti_pinigus'] = !($_SESSION['rodyti_pinigus'] ?? false);
+  }
+  
+  $rodyti = $_SESSION['rodyti_pinigus'] ?? false;
+  $button_text = $rodyti ? 'Slėpti pinigus' : 'Rodyti pinigus';
+  ?>
+
+  <form method="POST">
+    <button type="submit" name="lesos" value="show">
+        <?php echo $button_text; ?>
+    </button>
+  </form>
+  <?php
+
+  if (isset($_POST['lesos'])) {
+      if ($button_text === 'Slėpti pinigus') {
+        $c = db();
+        $lesu_sql = $c->query("SELECT `pinigai` FROM `naudotojas` LIMIT 1")->fetch_assoc();
+        if ($lesu_sql){
+        echo "<a>Jūsų pinigai: " . number_format((float)$lesu_sql['pinigai'], 2) . " €</a>";
+        }
+        else {
+            echo "<a>Klaida gaunant pinigus.</a>";
+        }
+      } else {
+        echo "<a>Pinigai paslėpti.</a>";
+      }
+  }
+
+  ?>
+  <?php endif; ?>
 </nav>
 
 <hr>

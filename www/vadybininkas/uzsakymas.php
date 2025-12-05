@@ -77,14 +77,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
             // 3) Užsakymo būsena
             $ok = $ok && $c->query("UPDATE `užsakymas` SET `būsena`='įvykdytas', `rezervacijos_galiojimo_data`=NULL WHERE `id`=$uzid");
-
+            $ok = $ok && $c->query("INSERT INTO `žinutė` (`naudotojo_id`, `turinys`)
+                                        VALUES ($uid, 'Jūsų užsakymas #$uzid buvo įvykdytas.')");
             if ($ok) {
                 $c->commit();
                 $c->autocommit(true);
-                $zinute = "Užsakymas įvykdytas. Išsiunčiamas el. laiškas...";
-                // El. laiškas apie įvykdymą
-                @siusti_uzsakymo_pranesima($uz['paštas'], $uzid, 'įvykdytas');
-                // Reload, kad atsinaujintų rodoma info
+
                 header("Refresh: 1; url=uzsakymas.php?id=$uzid");
             } else {
                 $c->rollback();

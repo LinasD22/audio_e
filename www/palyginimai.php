@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../konfiguracija/nustatymai.php';
 $c = db();
-
+require_once __DIR__ . '/../konfiguracija/bibliotekos/auth.php';
+reikalauti_vaidmens('vartotojas');
 $ids = [];
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     $ids = array_map('intval', $_POST['cmp'] ?? []);
