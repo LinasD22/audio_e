@@ -57,7 +57,7 @@ echo "================================"
 echo ""
 echo "Service status:"
 echo "- Apache: http://localhost"
-echo "- phpMyAdmin (if installed): http://localhost/phpmyadmin"
+echo "- phpMyAdmin: http://localhost/phpmyadmin"
 echo "- Audio Shop: http://localhost/audio_e"
 echo ""
 echo "To check service status manually:"
@@ -68,6 +68,6 @@ echo "To stop services:"
 echo "  sudo systemctl stop apache2"
 echo "  sudo systemctl stop mariadb"
 echo ""
-#sudo cp /home/stud/audio_e/konfiguracija/audio.conf /etc/apache2/sites-available/
-#sudo a2ensite audio.conf
-#sudo service apache2 restart
+sudo cp /home/stud/audio_e/konfiguracija/audio.conf /etc/apache2/sites-available/
+sudo a2ensite audio.conf
+sudo service apache2 restart
