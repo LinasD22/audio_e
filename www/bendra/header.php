@@ -80,12 +80,19 @@ input, select, button { padding:4px 6px; margin:3px 0; }
   if (isset($_POST['lesos'])) {
       if ($button_text === 'Slėpti pinigus') {
         $c = db();
-        $lesu_sql = $c->query("SELECT `pinigai` FROM `naudotojas` LIMIT 1")->fetch_assoc();
-        if ($lesu_sql){
-        echo "<a>Jūsų pinigai: " . number_format((float)$lesu_sql['pinigai'], 2) . " €</a>";
-        }
-        else {
-            echo "<a>Klaida gaunant pinigus.</a>";
+        
+        $naud_id = !empty($_SESSION['naudotojas_id']) ? (int)$_SESSION['naudotojas_id'] : 'NULL';
+        if ($naud_id !== 'NULL') {
+          $lesu_sql = $c->query("SELECT `pinigai` 
+                                 FROM `naudotojas`
+                                 WHERE `id` = $naud_id
+                                 LIMIT 1")->fetch_assoc();
+          if ($lesu_sql){
+          echo "<a>Jūsų pinigai: " . number_format((float)$lesu_sql['pinigai'], 2) . " €</a>";
+          }
+          else {
+              echo "<a>Klaida gaunant pinigus.</a>";
+          }
         }
       } else {
         echo "<a>Pinigai paslėpti.</a>";

@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['prideti'])) {
 }
 
 // Filtrai (paprasti, su LIKE ir <= kainai)
+//style="background-color: red;"
 $paskirtis = trim($_GET['paskirtis'] ?? '');
 $tipas     = trim($_GET['tipas'] ?? '');
 $gam      = trim($_GET['gamintojas'] ?? '');
@@ -49,6 +50,21 @@ $res = $c->query($sql);
 $prekes = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 
 require_once __DIR__ . '/bendra/header.php';
+
+$krepselio_id = !empty($_SESSION['krepselio_id']) ? (int)$_SESSION['krepselio_id'] : 'NULL';
+
+//Get krepselis item then if it is in $prekes query then change the color of the button 
+$krepselis_sql = "SELECT `prekės_id` 
+                  FROM `krepšelio_prekė`
+                  WHERE `krepšelio_id` = ".$krepselio_id."";
+$krepselis_res = $c->query($krepselis_sql);
+$krepselio_prekes = [];
+if ($krepselis_res) {
+    while ($row = $krepselis_res->fetch_assoc()) {
+        $krepselio_prekes[] = $row['prekės_id'];
+    }
+    //echo "<p>Krepšelyje: " . implode(', ', $krepselio_prekes) . "</p>";
+}
 ?>
 <h2>Prekės (paieška ir palyginimas)</h2>
 
@@ -60,7 +76,7 @@ require_once __DIR__ . '/bendra/header.php';
   Gamintojas: <input name="gamintojas" value="<?= h($gam) ?>">
   Modelis: <input name="modelis" value="<?= h($modelis) ?>">
   Kaina iki: <input type="number" step="0.01" name="kaina_max" value="<?= h($kaina_max) ?>">
-  <button type="submit">Ieškoti</button>
+  <button type="submit" >Ieškoti</button>
 </form>
 
 <table>
@@ -74,7 +90,12 @@ require_once __DIR__ . '/bendra/header.php';
       <td>
         <form method="post" action="" style="display:inline;">
           <input type="hidden" name="prekesId" value="<?= (int)$p['id'] ?>">
-          <button type="submit" name="prideti">Pridėti</button>
+          <?php 
+          if (in_array((int)$p['id'], $krepselio_prekes)): ?>
+              <button type="submit" name="prideti" disabled style="background-color: green; color: black;">Pridėti</button>
+          <?php else: ?>
+              <button type="submit" name="prideti">Pridėti</button>
+          <?php endif; ?>
         </form>
       </td>
     </tr>
