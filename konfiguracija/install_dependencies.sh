@@ -3,7 +3,7 @@
 set -e
 
 echo "================================"
-echo "Audio Shop - Lubuntu Dependency Installer"
+echo "Audio Shop - Linux Mint/Ubuntu Dependency Installer"
 echo "================================"
 echo ""
 
@@ -20,9 +20,9 @@ fi
 echo "Detected OS: $OS $VERSION (ID_LIKE=$ID_LIKE)"
 echo ""
 
-# Only allow Lubuntu/Ubuntu derivatives
-if ! { [ "$OS" = "ubuntu" ] || echo "$ID_LIKE" | grep -q "ubuntu"; }; then
-    echo "This script is intended for Lubuntu/Ubuntu only. Aborting."
+# Allow Linux Mint, Ubuntu, and derivatives
+if ! { [ "$OS" = "ubuntu" ] || [ "$OS" = "linuxmint" ] || echo "$ID_LIKE" | grep -q "ubuntu"; }; then
+    echo "This script is intended for Linux Mint/Ubuntu only. Aborting."
     exit 1
 fi
 
